@@ -1,13 +1,14 @@
 {
   "slug": "media-toolkit",
   "name": "Media Toolkit",
-  "tagline": "Convert, trim, compress audio/video, extract audio, make GIFs and burn subtitles \u2014 offline (FFmpeg).",
+  "tagline": "Convert, trim, compress audio/video, extract audio, make GIFs and burn subtitles — offline (FFmpeg).",
   "categorySlug": "video-editors",
   "license": "Apache-2.0",
-  "description": "Convert between common audio and video formats, trim and cut clips, compress with quality presets, extract audio from video, create GIFs from video, and burn subtitles in \u2014 all by driving a bundled FFmpeg. Batch-friendly with progress. Runs entirely on your machine.",
+  "description": "Convert between common audio and video formats, trim and cut clips, compress with quality presets, extract audio from video, create GIFs from video, and burn subtitles in — all by driving a bundled FFmpeg. Batch-friendly with progress. Runs entirely on your machine.",
   "aiStack": "Python (tkinter + CLI) wrapping FFmpeg (LGPL), Pillow",
   "platforms": [
-    "windows"
+    "windows",
+    "linux"
   ],
   "buildEntry": "media_app.py"
 }
