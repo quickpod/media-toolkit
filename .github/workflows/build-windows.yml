@@ -26,8 +26,10 @@ jobs:
           pyinstaller --onefile --windowed --name MediaToolkit
           --icon media-toolkit.ico
           --version-file packaging/version.txt
+          --hidden-import mediakit.__main__
           --add-data "media-toolkit.ico;."
           --collect-submodules PIL
+          --collect-all customtkinter
           media_app.py
       - name: Stage installer inputs
         shell: pwsh
@@ -49,4 +51,10 @@ jobs:
           path: |
             dist/MediaToolkit.exe
             packaging/dist/MediaToolkit-Setup.exe
+          if-no-files-found: error
+      - name: Upload staging (for signed repack)
+        uses: actions/upload-artifact@v4
+        with:
+          name: media-toolkit-staging
+          path: packaging/staging
           if-no-files-found: error
