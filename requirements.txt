@@ -1,0 +1,2 @@
+# Media Toolkit runtime deps — permissive/weak-copyleft only, no AGPL/proprietary.
+Pillow>=10.4
