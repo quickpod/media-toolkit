@@ -1,6 +1,6 @@
 ; Inno Setup — Media Toolkit. Signed single-file installer, compiled in CI.
 #define AppName "Media Toolkit"
-#define AppVersion "1.0.4"
+#define AppVersion "1.0.6"
 
 [Setup]
 AppMutex=QuickOpen.MediaToolkit
@@ -24,7 +24,7 @@ WizardSmallImageFile=branding\wizard-small.bmp
 AppCopyright=Apache-2.0. 100%% AI-built, published on QuickOpen (quickopen.ai).
 VersionInfoCompany=QuickOpen
 VersionInfoProductName=Media Toolkit
-VersionInfoVersion=1.0.4.0
+VersionInfoVersion=1.0.6.0
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 ArchitecturesInstallIn64BitMode=x64compatible
