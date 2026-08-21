@@ -15,12 +15,36 @@ jobs:
         run: python -m pip install --upgrade pip -r requirements.txt pyinstaller pytest
       - name: Run tests
         run: python -m pytest -q
-      - name: Fetch LGPL ffmpeg
+      - name: Fetch the pinned FFmpeg build
         shell: pwsh
+        # NOT `choco install ffmpeg`. That put Chocolatey's ShimGen shim in the
+        # installer instead of ffmpeg: a 392 KB .NET launcher pointing at a path
+        # on the BUILD machine, so every ffmpeg call failed on a user's box -
+        # and because the app searches its own directory before PATH, it also
+        # shadowed any working ffmpeg the user already had.
         run: |
-          choco install ffmpeg --no-progress -y
-          $ff = (Get-Command ffmpeg.exe -ErrorAction SilentlyContinue).Source
-          if ($ff) { Copy-Item $ff ffmpeg_staged.exe -ErrorAction SilentlyContinue }
+          $pin = @{}
+          Get-Content packaging/ffmpeg-pin.txt | Where-Object { $_ -match '^[a-z0-9_]+=' } | ForEach-Object {
+            $k,$v = $_ -split '=',2; $pin[$k.Trim()] = $v.Trim()
+          }
+          Invoke-WebRequest -Uri $pin.url -OutFile ffmpeg.zip -UseBasicParsing
+          $got = (Get-FileHash ffmpeg.zip -Algorithm SHA256).Hash.ToLower()
+          if ($got -ne $pin.sha256.ToLower()) { throw "ffmpeg sha256 mismatch: got $got want $($pin.sha256)" }
+          Expand-Archive ffmpeg.zip -DestinationPath ffmpeg_dl -Force
+          New-Item -ItemType Directory -Force ffmpeg_bin | Out-Null
+          foreach ($t in ($pin.tools -split '\s+')) {
+            $src = Get-ChildItem ffmpeg_dl -Recurse -Filter $t | Select-Object -First 1
+            if (-not $src) { throw "$t not found in the pinned archive" }
+            Copy-Item $src.FullName "ffmpeg_bin\$t"
+            # THE GATE. A shim is small and answers nothing useful; the real
+            # binary prints its version banner. Checking the bytes we actually
+            # staged is the check whose absence shipped the shim.
+            $len = (Get-Item "ffmpeg_bin\$t").Length
+            if ($len -lt 20MB) { throw "$t is only $len bytes - that is a shim, not ffmpeg" }
+            $banner = & "ffmpeg_bin\$t" -version 2>&1 | Select-Object -First 1
+            if ($banner -notmatch 'version') { throw "$t did not report a version: $banner" }
+            "$t OK ($([math]::Round($len/1MB,1)) MB) - $banner"
+          }
       - name: Build MediaToolkit.exe
         run: >
           pyinstaller --onefile --windowed --name MediaToolkit
@@ -37,8 +61,8 @@ jobs:
           $stage = "packaging/staging"
           New-Item -ItemType Directory -Force -Path $stage | Out-Null
           Copy-Item dist/MediaToolkit.exe $stage/
-          if (Test-Path ffmpeg_staged.exe) { Copy-Item ffmpeg_staged.exe $stage/ffmpeg.exe }
-          'FFmpeg is licensed under the LGPL/GPL. Source: https://ffmpeg.org . Redistributed unmodified.' | Out-File -Encoding utf8 $stage/ffmpeg-LICENSE.txt
+          Copy-Item ffmpeg_bin/*.exe $stage/
+          Copy-Item packaging/ffmpeg-LICENSE.txt $stage/
           Copy-Item quickopen-root.crt, README.md, LICENSE $stage/ -ErrorAction SilentlyContinue
       - name: Install Inno Setup
         run: choco install innosetup --no-progress -y

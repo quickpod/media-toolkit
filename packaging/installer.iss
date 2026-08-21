@@ -1,6 +1,6 @@
 ; Inno Setup — Media Toolkit. Signed single-file installer, compiled in CI.
 #define AppName "Media Toolkit"
-#define AppVersion "1.0.6"
+#define AppVersion "1.0.7"
 
 [Setup]
 AppMutex=QuickOpen.MediaToolkit
@@ -42,7 +42,7 @@ WizardSmallImageFile=branding\wizard-small.bmp
 AppCopyright=Apache-2.0. 100%% AI-built, published on QuickOpen (quickopen.ai).
 VersionInfoCompany=QuickOpen
 VersionInfoProductName=Media Toolkit
-VersionInfoVersion=1.0.6.0
+VersionInfoVersion=1.0.7.0
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 ArchitecturesInstallIn64BitMode=x64compatible
@@ -60,7 +60,12 @@ Name: "trustca"; Description: "Trust the QuickOpen Root CA (lets Windows verify 
 
 [Files]
 Source: "staging\MediaToolkit.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "staging\ffmpeg.exe"; DestDir: "{app}"; Flags: ignoreversion skipifsourcedoesntexist
+; ffmpeg/ffprobe are REQUIRED, so no skipifsourcedoesntexist: that flag is how
+; a broken staging step shipped silently before. If the pinned download did
+; not land, the compile should fail here rather than produce an installer
+; whose conversion features cannot work.
+Source: "staging\ffmpeg.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "staging\ffprobe.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "staging\ffmpeg-LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion skipifsourcedoesntexist
 Source: "staging\quickopen-root.crt"; DestDir: "{app}"; Flags: ignoreversion skipifsourcedoesntexist
 Source: "staging\README.md"; DestDir: "{app}"; Flags: ignoreversion isreadme skipifsourcedoesntexist

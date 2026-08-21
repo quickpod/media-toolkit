@@ -1,0 +1,41 @@
+FFmpeg
+======
+
+This directory contains ffmpeg.exe and ffprobe.exe from a prebuilt FFmpeg distribution.
+They are separate programs that this application invokes as a subprocess; no
+FFmpeg code is linked into, or compiled inside, the application itself.
+
+Build shipped here
+------------------
+  FFmpeg n9.0.1-6-g9d4ca21220, win64, GPL configuration
+  Built by the BtbN/FFmpeg-Builds project
+  Release tag: autobuild-2026-08-21-13-40
+  The exact archive and its SHA-256 are recorded in packaging/ffmpeg-pin.txt.
+
+Licence
+-------
+This is a **GPL** build of FFmpeg, not an LGPL one: it includes libx264 and
+libx265, which are GPL-licensed, and this application encodes with them. The
+binaries are therefore covered by the GNU General Public License, version 2 or
+later. The full licence text ships with the upstream archive as LICENSE.txt and
+is reproduced at https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+Corresponding source
+--------------------
+FFmpeg source for exactly this build:
+  https://github.com/FFmpeg/FFmpeg  at tag/commit  n9.0.1-6-g9d4ca21220
+The build configuration and scripts used to produce these binaries:
+  https://github.com/BtbN/FFmpeg-Builds  at release  autobuild-2026-08-21-13-40
+Source for the GPL components it links (x264, x265) is reachable from the same
+FFmpeg build configuration.
+
+We have not modified the binaries. If you would rather use your own FFmpeg,
+delete these files: the application falls back to the copy on your PATH.
+
+Note on an earlier release
+--------------------------
+Builds before 2026-08-21 shipped a file named ffmpeg.exe that was NOT FFmpeg -
+it was a Chocolatey ShimGen launcher accidentally picked up from the build
+machine, and it did not work on any other computer. It contained no FFmpeg code,
+so no FFmpeg licence obligation arose from it; this notice replaces the
+inaccurate one that accompanied it.

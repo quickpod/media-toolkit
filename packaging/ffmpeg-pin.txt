@@ -1,0 +1,21 @@
+# The exact FFmpeg build this app ships. Pinned by sha256 the same way the
+# engine apps pin their upstream payloads.
+#
+# WHY A PIN AND NOT `choco install ffmpeg`: the build used to do exactly that
+# and then copy `(Get-Command ffmpeg.exe).Source` into staging. That path
+# resolves to C:\ProgramData\chocolatey\bin\ffmpeg.exe, which is NOT ffmpeg
+# - it is a 392 KB Chocolatey ShimGen shim, a .NET launcher that forwards to
+# ..\lib\ffmpeg\tools\ffmpeg\bin\ffmpeg.exe on the BUILD machine. On a
+# user's machine that path does not exist, so every ffmpeg call failed with
+# "Cannot find file at ...". Worse, the app searches its own directory BEFORE
+# PATH, so the shim shadowed any working ffmpeg the user already had.
+#
+# GPL, DELIBERATELY: this app encodes with libx264/libx265, which are GPL, so
+# the LGPL build will not do. Shipping GPL binaries carries a source-availability
+# obligation - see ffmpeg-LICENSE.txt, staged next to the binaries.
+build=BtbN/FFmpeg-Builds autobuild-2026-08-21-13-40
+version=n9.0.1-6-g9d4ca21220
+url=https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-08-21-13-40/ffmpeg-n9.0.1-6-g9d4ca21220-win64-gpl-9.0.zip
+sha256=6c0a3c1256cba57c62a3bb012c1e8f5e794d38a16c6509d05349237d2b66340f
+# Which tools to stage out of bin/. ffplay is deliberately NOT shipped.
+tools=ffmpeg.exe ffprobe.exe
