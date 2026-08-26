@@ -42,7 +42,7 @@ from .edit import (
 )
 from .batch import batch_apply
 
-__version__ = "1.0.6"
+__version__ = "1.0.7"
 
 __all__ = [
     "MediaKitError",
